@@ -1,7 +1,7 @@
 [
  {
   "directory": "E:\\Work\\Dev\\repos\\brickBreaker",
-  "command": "g++ -Wall -std=c++17 -o bin/game main.cpp -ISFML/include -LSFML/lib -Lbin -lopengl32 -lsfml-graphics-2 -lsfml-window-2 -lsfml-system-2 -DSFML_STATIC",
-  "file": "main.cpp"
+  "command": "g++ -Wall -std=c++17 -o bin/game src/main.cpp -ISFML/include -LSFML/lib -Lbin -lopengl32 -lsfml-graphics-2 -lsfml-window-2 -lsfml-system-2 -DSFML_STATIC",
+  "file": "src/main.cpp"
  }
 ]
