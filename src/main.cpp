@@ -14,6 +14,8 @@ int main(int argc, char* argv[])
 
     sf::Vector2f playerPos(200.f, 300.f);
 
+    sf::Vector2f playerVelocity(0, 0);
+
     while (window.isOpen()) {
         sf::Event e;
         while (window.pollEvent(e)) {
@@ -22,36 +24,42 @@ int main(int argc, char* argv[])
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-            playerPos.x -= .5f;
+            playerPos.x -= .1f;
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-            playerPos.x += .5f;
+            playerPos.x += .1f;
         }
 
-        // moving the shape
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+            window.close();
+        }
 
+        // moving the shape--------------------------------------------------------------
+
+        // gravity
         playerPos.y += .5f;
 
         // world bounds collision
         // Right
-        if (player.getLocalBounds().width > window.getSize().x ) {
-            playerPos.x = window.getSize().x - (player.getSize().x / 2);
-        }
-        // Left
-        if (player.getPosition().x < (player.getSize().x / 2)) {
-            playerPos.x = (player.getSize().x / 2);
-        }
-        // Top
-        if (player.getPosition().y < (player.getSize().y / 2)) {
-            playerPos.y = (player.getSize().y / 2);
+        if (player.getSize().x + player.getPosition().x > window.getSize().x) {
+            playerPos.x = window.getSize().x - player.getSize().x;
         }
         // Bottom
-        if (player.getGlobalBounds().height > window.getSize().y ) {
-            playerPos.y = window.getSize().y;
+        if (player.getSize().y + player.getPosition().y > window.getSize().y) {
+            playerPos.y = window.getSize().y - player.getSize().y;
+        }
+        // Left
+        if (player.getPosition().x < 0) {
+            playerPos.x = 0;
+        }
+        // Top
+        if (player.getPosition().y < 0) {
+            playerPos.y = 0;
         }
 
         player.setPosition(playerPos);
+        //-------------------------------------------------------------------------------
 
         // draw shape
         window.clear();
