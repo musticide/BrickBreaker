@@ -1,5 +1,6 @@
 CC=g++
 CXXFLAGS = -Wall -std=c++17
+PWSH=@pwsh -NoProfile -Command
 
 INCLUDE = -ISFML/include
 LIBRARIES = -LSFML/lib -Lbin
@@ -12,6 +13,10 @@ INT=intermediates
 SRC=src
 
 all: game
+	@echo Staring game.exe...
+	$(PWSH) ".\bin\game.exe"
 
 game: $(SRC)/*.cpp
-	$(CC) $(CXXFLAGS) -o bin/$@ $< $(INCLUDE) $(LIBRARIES) $(LINKS) $(DEFINES)
+	@echo Building game.exe...
+	@$(CC) $(CXXFLAGS) -o bin/$@ $< $(INCLUDE) $(LIBRARIES) $(LINKS) $(DEFINES)
+	@echo Built game.exe

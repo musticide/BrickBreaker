@@ -3,12 +3,14 @@
 #include "SFML/Window/Keyboard.hpp"
 #include <SFML/Graphics.hpp>
 
+#define WIDTH 1280
+#define HEIGHT 720
+
 int main(int argc, char* argv[])
 {
-    sf::RenderWindow window(sf::VideoMode(1280, 720), "SFML works!", sf::Style::None | sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Brick Breaker", sf::Style::None | sf::Style::Close);
 
     sf::RectangleShape player(*new sf::Vector2f(100.f, 20.f));
-    player.setOrigin(50.f, 20.f);
 
     sf::Vector2f playerPos(200.f, 300.f);
 
@@ -33,7 +35,7 @@ int main(int argc, char* argv[])
 
         // world bounds collision
         // Right
-        if (player.getPosition().x > window.getSize().x - (player.getSize().x / 2)) {
+        if (player.getLocalBounds().width > window.getSize().x ) {
             playerPos.x = window.getSize().x - (player.getSize().x / 2);
         }
         // Left
@@ -45,8 +47,8 @@ int main(int argc, char* argv[])
             playerPos.y = (player.getSize().y / 2);
         }
         // Bottom
-        if (player.getPosition().y > window.getSize().y - (player.getSize().y / 2)) {
-            playerPos.y = window.getSize().y - (player.getSize().y / 2);
+        if (player.getGlobalBounds().height > window.getSize().y ) {
+            playerPos.y = window.getSize().y;
         }
 
         player.setPosition(playerPos);
