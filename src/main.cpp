@@ -2,13 +2,17 @@
 #include "SFML/System/Vector2.hpp"
 #include "SFML/Window/Keyboard.hpp"
 #include <SFML/Graphics.hpp>
+#include <algorithm>
 
 #define WIDTH 1280
 #define HEIGHT 720
+#define FRAMERATE 144
 
 int main(int argc, char* argv[])
 {
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Brick Breaker", sf::Style::None | sf::Style::Close);
+    window.setFramerateLimit(FRAMERATE);
+    float targetFrameTime = 1.f/FRAMERATE;
 
     sf::RectangleShape player(*new sf::Vector2f(100.f, 20.f));
 
@@ -16,29 +20,36 @@ int main(int argc, char* argv[])
 
     sf::Vector2f playerVelocity(0, 0);
 
+    sf::Clock clock;
+
     while (window.isOpen()) {
+
         sf::Event e;
         while (window.pollEvent(e)) {
             if (e.type == sf::Event::Closed)
                 window.close();
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-            playerPos.x -= .1f;
-        }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-            playerPos.x += .1f;
-        }
-
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
             window.close();
         }
 
+        //Time Handling------------------------------------------------------------------
+        sf::Time elapsedTime = clock.restart();
+        float deltaTime = elapsedTime.asSeconds();
+        deltaTime = std::min(deltaTime, targetFrameTime);
+
         // moving the shape--------------------------------------------------------------
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+            playerPos.x -= 100.f * deltaTime;
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+            playerPos.x += 100.f * deltaTime;
+        }
 
         // gravity
-        playerPos.y += .5f;
+        playerPos.y += 980.f* deltaTime;
 
         // world bounds collision
         // Right
