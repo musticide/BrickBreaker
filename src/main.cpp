@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <algorithm>
 #include <cstdio>
+#include <cstdlib>
 
 #define WIDTH 1280
 #define HEIGHT 720
@@ -21,7 +22,8 @@ int main(int argc, char* argv[])
     player.setPosition(playerPos);
 
     float playerAcc = 0;
-    float playerFriction = 1;
+    float playerFriction = .1f;
+    int moveDir = 0;
 
     sf::Vector2f playerVelocity(0, 0);
 
@@ -46,19 +48,19 @@ int main(int argc, char* argv[])
 
         // moving the shape--------------------------------------------------------------
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-            playerAcc = -200;
+            playerAcc += 10;
+            moveDir = -1;
         } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-            playerAcc = 200;
+            playerAcc += 10;
+            moveDir = 1;
         } else {
+            playerAcc = 0;
+            moveDir = 0;
         }
 
-        playerVelocity.x += playerAcc * deltaTime;
-        if (playerVelocity.x > 0) {
-            playerVelocity.x -= playerFriction;
-        } else if (playerVelocity.x < 0) {
-            playerVelocity.x += playerFriction;
-        }
-
+        playerVelocity.x += playerAcc * moveDir * deltaTime;
+        playerVelocity.x -= playerVelocity.x * playerFriction;
+        
         player.move(playerVelocity);
 
         // world bounds collision
