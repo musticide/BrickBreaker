@@ -17,10 +17,13 @@ int main(int argc, char* argv[])
 
     sf::RectangleShape player(sf::Vector2f(100.f, 20.f));
 
-    sf::Vector2f playerPos(200.f, 300.f);
+    sf::Vector2f playerPos(200.f, window.getSize().y - player.getSize().y - 10);
     player.setPosition(playerPos);
 
-    sf::Vector2f playerVelocity(0, 980);
+    float playerAcc = 0;
+    float playerFriction = 1;
+
+    sf::Vector2f playerVelocity(0, 0);
 
     sf::Clock clock;
 
@@ -43,21 +46,26 @@ int main(int argc, char* argv[])
 
         // moving the shape--------------------------------------------------------------
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-            playerVelocity.x = -1200.f * deltaTime;
+            playerAcc = -200;
         } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-            playerVelocity.x = 1200.f * deltaTime;
+            playerAcc = 200;
         } else {
-            playerVelocity.x = 0;
         }
 
-        // gravity
-        // playerPos.y += 980.f* deltaTime;
+        playerVelocity.x += playerAcc * deltaTime;
+        if (playerVelocity.x > 0) {
+            playerVelocity.x -= playerFriction;
+        } else if (playerVelocity.x < 0) {
+            playerVelocity.x += playerFriction;
+        }
+
         player.move(playerVelocity);
 
         // world bounds collision
         // Right
         if (player.getSize().x + player.getPosition().x + playerVelocity.x > window.getSize().x) {
             player.setPosition(window.getSize().x - player.getSize().x, player.getPosition().y);
+            playerVelocity.x *= -1;
         }
         // Bottom
         if (player.getSize().y + player.getPosition().y + playerVelocity.y > window.getSize().y) {
@@ -66,6 +74,7 @@ int main(int argc, char* argv[])
         // Left
         if (player.getPosition().x + playerVelocity.x < 0) {
             player.setPosition(0, player.getPosition().y);
+            playerVelocity.x *= -1;
         }
         // Top
         if (player.getPosition().y + playerVelocity.y < 0) {
