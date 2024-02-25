@@ -29,12 +29,15 @@ int main(int argc, char* argv[])
     sf::Vector2f playerVelocity(0, 0);
 
     // ball stuff ------------------------------------------------------------------------
-    sf::CircleShape ball(HEIGHT * 0.028f * .5f);
+    float ballDiam = HEIGHT * 0.028f;
+    sf::CircleShape ball(ballDiam * .5f);
+    ball.setOrigin(ballDiam, ballDiam);
     ball.setFillColor(sf::Color::Yellow);
     ball.setPosition(WIDTH * .5f - (player.getSize().x * .5f), window.getSize().y - player.getSize().y - 10);
-    // ball.setPosition(WIDTH / 2.f, HEIGHT / 2.f);
+    // ball.setPosition(0, 0);
 
     sf::Vector2f ballVelocity(0, 9.8f);
+    // sf::Vector2f ballVelocity(0, 0);
 
     // Time-------------------------------------------------------------------------------
     sf::Clock clock;
@@ -55,7 +58,7 @@ int main(int argc, char* argv[])
         // Time Handling------------------------------------------------------------------
         sf::Time elapsedTime = clock.restart();
         float deltaTime = elapsedTime.asSeconds();
-        deltaTime = std::min(deltaTime, targetFrameTime);
+        deltaTime = std::max(deltaTime, targetFrameTime);
 
         // moving the player--------------------------------------------------------------
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
@@ -98,14 +101,14 @@ int main(int argc, char* argv[])
 
         // Ball bounds collision---------------------------------------------------------
         // Right
-        if (ball.getRadius() + ball.getPosition().x + ballVelocity.x > window.getSize().x) {
-            ball.setPosition(window.getSize().x - ball.getRadius(), ball.getPosition().y);
+        if (ballDiam + ball.getPosition().x + ballVelocity.x > window.getSize().x) {
+            ball.setPosition(window.getSize().x - ballDiam, ball.getPosition().y);
             ballVelocity.x *= -1;
         }
         // Bottom
-        if (ball.getRadius() + ball.getPosition().y + ballVelocity.y > window.getSize().y) {
-            ball.setPosition(ball.getPosition().x, window.getSize().y - 2 * ball.getRadius());
-            ballVelocity.y *= -1;
+        if (ballDiam + ball.getPosition().y > window.getSize().y) {
+            // ball.setPosition(ball.getPosition().x, window.getSize().y - ballDiam);
+            // ballVelocity.y *= -1;
 
             //////////////////////////////////////////////////////////
             //--------------------GAME OVER-------------------------//
@@ -122,6 +125,16 @@ int main(int argc, char* argv[])
             ballVelocity.y *= -1;
         }
         // ball player collision---------------------------------------------------------
+        if (ball.getPosition().y + ball.getRadius() > player.getPosition().y
+            && ball.getPosition().y + ball.getRadius() < player.getPosition().y + player.getSize().y
+            && ball.getPosition().x + ball.getRadius() > player.getPosition().x
+            && ball.getPosition().x + ball.getRadius() < player.getPosition().x + player.getSize().x) {
+            ball.setPosition(ball.getPosition().x, player.getPosition().y - ball.getRadius());
+            ballVelocity.x *= -1;
+            ballVelocity.y *= -1;
+            // ballVelocity.x *= playerVelocity.x;
+            // ballVelocity.y *= playerVelocity.y;
+        }
 
         // if (ball.getPosition().y + ball.getLocalBounds().height > window.getSize().y) {
         //     ball.setPosition(ball.getPosition().x, window.getSize().y - ball.getLocalBounds().height);
