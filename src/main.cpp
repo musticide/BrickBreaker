@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 
     float playerAcc = 0;
     float playerFriction = .1f;
-    int moveDir = 0;
+    // int moveDir = 0;
 
     sf::Vector2f playerVelocity(0, 0);
 
@@ -36,7 +36,9 @@ int main(int argc, char* argv[])
     ball.setPosition(WIDTH * .5f - (player.getSize().x * .5f), window.getSize().y - player.getSize().y - 10);
     // ball.setPosition(0, 0);
 
-    sf::Vector2f ballVelocity(0, 9.8f);
+    sf::Vector2f ballVelocity(0, 5.f);
+    sf::Vector2f ballMaxVelocity(7, 7);
+    float ballFriction = .01f;
     // sf::Vector2f ballVelocity(0, 0);
 
     // Time-------------------------------------------------------------------------------
@@ -62,17 +64,17 @@ int main(int argc, char* argv[])
 
         // moving the player--------------------------------------------------------------
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-            playerAcc += 10;
-            moveDir = -1;
+            playerAcc -= 5;
+            // moveDir = -1;
         } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-            playerAcc += 10;
-            moveDir = 1;
+            playerAcc += 5;
+            // moveDir = 1;
         } else {
             playerAcc = 0;
-            moveDir = 0;
+            // moveDir = 0;
         }
 
-        playerVelocity.x += playerAcc * moveDir * deltaTime;
+        playerVelocity.x += playerAcc * deltaTime;
         playerVelocity.x -= playerVelocity.x * playerFriction;
 
         player.move(playerVelocity);
@@ -130,15 +132,18 @@ int main(int argc, char* argv[])
             && ball.getPosition().x + ball.getRadius() > player.getPosition().x
             && ball.getPosition().x + ball.getRadius() < player.getPosition().x + player.getSize().x) {
             ball.setPosition(ball.getPosition().x, player.getPosition().y - ball.getRadius());
-            ballVelocity.x *= -1;
+            // ballVelocity.x *= -1;
             ballVelocity.y *= -1;
-            // ballVelocity.x *= playerVelocity.x;
-            // ballVelocity.y *= playerVelocity.y;
+            // ballVelocity = playerAcc;
+            ballVelocity.x += (playerAcc * .01f);
         }
 
         // if (ball.getPosition().y + ball.getLocalBounds().height > window.getSize().y) {
         //     ball.setPosition(ball.getPosition().x, window.getSize().y - ball.getLocalBounds().height);
         // }
+        if (ballVelocity.x > ballMaxVelocity.x || ballVelocity.y > ballMaxVelocity.y) {
+            ballVelocity -= ballVelocity * ballFriction;
+        }
 
         ball.move(ballVelocity);
 
